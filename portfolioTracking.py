@@ -39,6 +39,7 @@ class PortfolioTracker:
     
     # Record a trade with instrument, portfolio, quantity, price, timestamp and direction (buy/sell)
     def record_trade(self, instrument_name, portfolio_name, quantity, price, direction):
+        # Catch errors
         if instrument_name not in self.instruments:
             raise ValueError(f"Instrument: {instrument_name} does not exist")
         if portfolio_name not in self.portfolios:

@@ -28,7 +28,7 @@ def main():
             if choice == "1":
                 portfolio_name = input("Enter portfolio name: ").strip()
                 
-                currency = input("Enter currency: ").strip()
+                currency = input("Enter currency (balance): ").strip()
                 try:    # Check if currency is a number
                     currency = float(currency)
                 except ValueError:
@@ -92,7 +92,7 @@ def main():
                     print("Price must be greater than 0")
                     continue
                 
-                direction = input("Enter direction (buy/sell): ").strip()
+                direction = input("Enter direction (buy/sell): ").strip().lower()
 
                 tracker.record_trade(instrument_name, portfolio_name, quantity, price, direction)
                 print(f"Trade recorded: {direction} {quantity} of {instrument_name} at price {price} in portfolio {portfolio_name}.")
@@ -101,6 +101,7 @@ def main():
             elif choice == "6":
                 
                 # Ask for portfolio name and instrument name to filter trades
+                instrument_filter = None
                 portfolio_filter = input("Enter portfolio name to filter by (or leave blank for all): ").strip()
                 if portfolio_filter == "":
                     portfolio_filter = None
@@ -136,5 +137,6 @@ def main():
         except ValueError as e:
             print(f"Error: {e}")
         print("*------------------------------*")
+
 if __name__ == "__main__":
     main()
