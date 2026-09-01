@@ -28,8 +28,8 @@ class PortfolioTracker:
     
     # Create an instrument with a name and type
     def create_instrument(self, instrument_name, instrument_type):
-        if instrument_name in self.instruments:
-            raise ValueError(f"Instrument with name {instrument_name} already exists")
+        if instrument_name in self.instruments and instrument_type == self.instruments[instrument_name]:
+            raise ValueError(f"Instrument with name {instrument_name} and type {instrument_type} already exists")
         else:
             self.instruments[instrument_name] = instrument_type
     
@@ -86,7 +86,7 @@ class PortfolioTracker:
 
         else:  # If no filters, return all trades
             relevant_trades = self.trades
-            
+
         return relevant_trades
     
 

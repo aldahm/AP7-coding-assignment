@@ -63,7 +63,7 @@ def main():
                 if not instruments:
                     print("No instruments found")
                 else:
-                    print("Instruments:")
+                    print("Instruments: (Name: Type)")
                     for name, instrument_type in instruments.items():
                         print(f"{name}: {instrument_type}")
             
@@ -104,9 +104,11 @@ def main():
                 portfolio_filter = input("Enter portfolio name to filter by (or leave blank for all): ").strip()
                 if portfolio_filter == "":
                     portfolio_filter = None
-                instrument_filter = input("Enter instrument name to filter by (or leave blank for all): ").strip()
-                if instrument_filter == "":
-                    instrument_filter = None
+
+                    # Only ask for instrument filter if no portfolio filter is provided
+                    instrument_filter = input("Enter instrument name to filter by (or leave blank for all): ").strip()
+                    if instrument_filter == "":
+                        instrument_filter = None
                 
                 # List trades with optional filters
                 trades = tracker.list_trades(portfolio_filter, instrument_filter)
