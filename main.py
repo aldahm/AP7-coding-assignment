@@ -99,7 +99,17 @@ def main():
 
             # If list trades: List all trades
             elif choice == "6":
-                trades = tracker.list_trades()
+                
+                # Ask for portfolio name and instrument name to filter trades
+                portfolio_filter = input("Enter portfolio name to filter by (or leave blank for all): ").strip()
+                if portfolio_filter == "":
+                    portfolio_filter = None
+                instrument_filter = input("Enter instrument name to filter by (or leave blank for all): ").strip()
+                if instrument_filter == "":
+                    instrument_filter = None
+                
+                # List trades with optional filters
+                trades = tracker.list_trades(portfolio_filter, instrument_filter)
 
                 if not trades:
                     print("No trades found")
@@ -123,6 +133,6 @@ def main():
                 print("Invalid option. Please try again")
         except ValueError as e:
             print(f"Error: {e}")
-
+        print("*------------------------------*")
 if __name__ == "__main__":
     main()
