@@ -60,15 +60,34 @@ class PortfolioTracker:
             "instrument_name": instrument_name, 
             "quantity": quantity, 
             "price": price, 
-            "timestamp": datetime.now(), 
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
             "direction": direction
             }
         
         self.trades.append(trade)
     
     # List all trades
-    def list_trades(self): # Add filter by portfolio or instrusment
-        return self.trades
+    def list_trades(self, portfolio_name = None, instrument_name = None):
+        relevant_trades = []
+
+        if portfolio_name:  # Filter trades by portfolio name
+            if portfolio_name not in self.portfolios:
+                raise ValueError(f"Portfolio: {portfolio_name} does not exist")
+            for trade in self.trades:   
+                if trade["portfolio_name"] == portfolio_name:
+                    relevant_trades.append(trade)
+
+        elif instrument_name:  # Filter trades by instrument name
+            if instrument_name not in self.instruments:
+                raise ValueError(f"Instrument: {instrument_name} does not exist")
+            for trade in self.trades:
+                if trade["instrument_name"] == instrument_name:
+                    relevant_trades.append(trade)
+
+        else:  # If no filters, return all trades
+            relevant_trades = self.trades
+            
+        return relevant_trades
     
 
     """Note to self: to add more sophisticated pnl calculation.
