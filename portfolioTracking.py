@@ -37,7 +37,6 @@ class PortfolioTracker:
     def list_instruments(self):
         return self.instruments
     
-    """Note to self: Add error handling for invalid input types"""
     # Record a trade with instrument, portfolio, quantity, price, timestamp and direction (buy/sell)
     def record_trade(self, instrument_name, portfolio_name, quantity, price, direction):
         if instrument_name not in self.instruments:
@@ -46,11 +45,15 @@ class PortfolioTracker:
             raise ValueError(f"Portfolio: {portfolio_name} does not exist")
         if direction not in ["buy", "sell"]:
             raise ValueError("Direction must be 'buy' or 'sell'")
-        if quantity <= 0: # kolla om felhanteringen är korrekt här
-            raise ValueError("Quantity must be a float/int greater than 0")
-        if price <= 0:
-            raise ValueError("Price must be a float/int greater than 0")
+        if direction == "buy" and price * quantity > self.portfolios[portfolio_name]:
+            raise ValueError(f"Not enough funds in portfolio {portfolio_name}. Current balance: {self.portfolios[portfolio_name]}, required: {price * quantity}")
         
+        # Update portfolio balance based on trade
+        if direction == "buy":
+            self.portfolios[portfolio_name] -= price * quantity
+        elif direction == "sell":
+            self.portfolios[portfolio_name] += price * quantity
+
         # Create a trade dictionary and append it to the trades list
         trade = {
             "portfolio_name": portfolio_name, 
