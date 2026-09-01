@@ -1,10 +1,10 @@
 # AP7-coding-assignment
 
-### Prerequisites:
+## Prerequisites:
 * Python 3.x
 * No external dependencies
 
-### Execution
+## Execution
 * Run 'main.py'
 
 
