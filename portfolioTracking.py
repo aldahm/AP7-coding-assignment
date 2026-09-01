@@ -28,8 +28,8 @@ class PortfolioTracker:
     
     # Create an instrument with a name and type
     def create_instrument(self, instrument_name, instrument_type):
-        if instrument_name in self.instruments and instrument_type == self.instruments[instrument_name]:
-            raise ValueError(f"Instrument with name {instrument_name} and type {instrument_type} already exists")
+        if instrument_name in self.instruments:
+            raise ValueError(f"Instrument with name {instrument_name} already exists")
         else:
             self.instruments[instrument_name] = instrument_type
     
@@ -77,32 +77,53 @@ class PortfolioTracker:
                 if trade["portfolio_name"] == portfolio_name:
                     relevant_trades.append(trade)
 
-        elif instrument_name:  # Filter trades by instrument name
+        if instrument_name:  # Filter trades by instrument name
             if instrument_name not in self.instruments:
                 raise ValueError(f"Instrument: {instrument_name} does not exist")
             for trade in self.trades:
                 if trade["instrument_name"] == instrument_name:
                     relevant_trades.append(trade)
 
-        else:  # If no filters, return all trades
+        if not instrument_name and not portfolio_name:  # If no filters, return all trades
             relevant_trades = self.trades
 
         return relevant_trades
     
 
-    """Note to self: to add more sophisticated pnl calculation.
-    for now only calculates total pnl for a portfolio based on recorded trades, not
-    taking into account current positions etc"""
+    """
+    PnL calculation assumptions:
+    1. Current price of each instrument is the price of the last trade recorded for that instrument.
+    2. When buy trades are recorded, PnL is reduced by the total cost of the trade (quantity * price).
+    3. When sell trades are recorded, PnL is increased by the total revenue of the trade (quantity * price).
+    4. For unrealized positions, PnL is adjusted based on the current price of the instrument and the quantity held.
+    """
     # Calculate pnl for a portfolio based on recorded trades
     def calculate_pnl(self, portfolio_name):
-        pnl = 0
+        
         if portfolio_name not in self.portfolios:
             raise ValueError(f"Portfolio: {portfolio_name} does not exist")
         
+        # Create pnl, positions and latest_prices dictionaries
+        pnl = 0
+        positions = {}
+        latest_prices = {}
+
+        # Loop throguh all trades and calculate pnl based on the assumptions above
         for trade in self.trades:
+            latest_prices[trade["instrument_name"]] = trade["price"]
+
             if trade["portfolio_name"] == portfolio_name:
+
+                # Decrease pnl for buy trades and increase pnl for sell trades and also update positions
                 if trade["direction"] == "buy":
                     pnl -= trade["quantity"] * trade["price"]
+                    positions[trade["instrument_name"]] = positions.get(trade["instrument_name"], 0) + trade["quantity"]
                 elif trade["direction"] == "sell":
                     pnl += trade["quantity"] * trade["price"]
+                    positions[trade["instrument_name"]] = positions.get(trade["instrument_name"], 0) - trade["quantity"]
+        
+        # Calculate unrealized PnL based on current positions and latest prices
+        for instrument, quantity in positions.items():
+            pnl += quantity * latest_prices[instrument]
+
         return pnl
